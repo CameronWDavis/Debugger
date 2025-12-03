@@ -1,0 +1,10 @@
+build/
+
+.vscode/
+
+vcpkg_installed/
+vcpkg/
+
+*.o
+*.a
+*.so
