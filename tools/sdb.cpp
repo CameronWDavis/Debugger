@@ -6,10 +6,26 @@
 #include <sys/wait.h>
 #include <editline/readline.h>
 #include <string>
+#include <vector>
 
 namespace {
+    std::vector<std::string> split(std::string_view str, char delimiter); 
+    bool is_prefix(std::string_view str, std::string_view of);
+    void resume(pid_t pid);
+    void wait_on_signal(pid_t pid); 
 
-    void handle_command(pid_t pid, std::string_view line); 
+
+    void handle_command(pid_t pid, std::string_view line){
+        auto args = split(line, ' ');
+        auto command = args[0];
+        if (is_prefix(command, "continue")){
+            resume(pid);
+            wait_on_signal(pid); 
+        }
+        else {
+            std::cerr <<"Unknown command\n"; 
+        }
+    }
 
     pid_t attach(int argc, const char** argv) {
         pid_t pid = 0;
