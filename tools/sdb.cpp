@@ -88,7 +88,6 @@ namespace {
         if (is_prefix(command, "continue")) {
             process->resume();
             auto reason = process->wait_on_signal();
-            
             print_stop_reason(*process, reason);
         }
         else {
