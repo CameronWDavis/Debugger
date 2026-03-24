@@ -3,8 +3,12 @@
 
 #include <filesystem>
 #include <memory>
+#include <optional>
 #include <sys/types.h>
 #include <libsdb/registers.hpp>
+#include <vector>
+#include <libsdb/breakpoint_site.hpp>
+#include <libsdb/stoppoint_collection.hpp>
 
 namespace sdb {
     enum class process_state {
@@ -24,8 +28,9 @@ namespace sdb {
     class process {
     public:
         ~process();
-        static std::unique_ptr<process> launch(
-            std::filesystem::path path, bool debug = true);
+        static std::unique_ptr<process> launch(std::filesystem::path path,
+            bool debug = true,
+            std::optional<int> stdout_replacement = std::nullopt);
         static std::unique_ptr<process> attach(pid_t pid);
 
         void resume();
@@ -46,6 +51,25 @@ namespace sdb {
         void write_fprs(const user_fpregs_struct& fprs);
         void write_gprs(const user_regs_struct& gprs);
 
+        virt_addr get_pc() const {
+            return virt_addr{
+                get_registers().read_by_id_as<std::uint64_t>(register_id::rip)
+            };
+        }
+
+        sdb::stop_reason step_instruction();
+
+        breakpoint_site& create_breakpoint_site(virt_addr address);
+
+        stoppoint_collection<breakpoint_site>&
+            breakpoint_sites() { return breakpoint_sites_; }
+
+        const stoppoint_collection<breakpoint_site>&
+            breakpoint_sites() const { return breakpoint_sites_; }
+
+        void set_pc(virt_addr address) {
+            get_registers().write_by_id(register_id::rip, address.addr());
+        }
     private:
         process(pid_t pid, bool terminate_on_end, bool is_attached)
             : pid_(pid), terminate_on_end_(terminate_on_end),
@@ -54,12 +78,12 @@ namespace sdb {
 
         void read_all_registers();
 
-
         pid_t pid_ = 0;
         bool terminate_on_end_ = true;
         process_state state_ = process_state::stopped;
         bool is_attached_ = true;
         std::unique_ptr<registers> registers_;
+        stoppoint_collection<breakpoint_site> breakpoint_sites_;
     };
 }
 
