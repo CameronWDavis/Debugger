@@ -15,7 +15,7 @@ namespace sdb {
         int release_read();
         int release_write();
         void close_read();
-        void close_write();
+        void close_write(); //needed for file reading and opening in the debugger
 
         std::vector<std::byte> read();
         void write(std::byte* from, std::size_t bytes);
