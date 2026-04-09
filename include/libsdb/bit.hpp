@@ -22,7 +22,7 @@ namespace sdb {
         return reinterpret_cast<const std::byte*>(&from);
     }
 
-    template <class From>
+    template <class From> //build class
     byte128 to_byte128(From src) {
         byte128 ret {};
         std::memcpy(&ret, &src, sizeof(From));
