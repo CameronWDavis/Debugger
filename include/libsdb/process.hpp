@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <libsdb/registers.hpp>
 #include <vector>
-#include <libsdb/breapoint_site.hpp>
+#include <libsdb/breakpoint_site.hpp>
 #include <libsdb/stoppoint_collection.hpp>
 #include <libsdb/bit.hpp>
 

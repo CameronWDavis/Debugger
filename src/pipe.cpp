@@ -1,19 +1,16 @@
 #include <unistd.h>
 #include <fcntl.h>
+#include <utility>
 #include <libsdb/pipe.hpp>
 #include <libsdb/error.hpp>
-#include <utility>
 
-sdb::pipe::pipe(bool close_on_exec) 
-{
-    if(pipe2(fds_,close_on_exec ? O_CLOEXEC : 0) < 0)
-    {
+sdb::pipe::pipe(bool close_on_exec) {
+    if (pipe2(fds_, close_on_exec ? O_CLOEXEC : 0) < 0) {
         error::send_errno("Pipe creation failed");
     }
 }
 
-sdb::pipe::~pipe()
-{
+sdb::pipe::~pipe() {
     close_read();
     close_write();
 }
