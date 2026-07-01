@@ -13,6 +13,9 @@ namespace sdb {
         breakpoint_site() = delete;
         breakpoint_site(const breakpoint_site&) = delete;
         breakpoint_site& operator=(const breakpoint_site&) = delete;
+        bool is_hardware() const {return is_hardware_};
+        bool is_internal() const { return is_internal_};
+
 
         using id_type = std::int32_t;
         id_type id() const { return id_; }
@@ -32,7 +35,7 @@ namespace sdb {
 
     private:
         breakpoint_site(
-            process& proc, virt_addr address);
+            process& proc, virt_addr address,  bool is_hardware = false,bool is_internal = false);
         friend process;
 
         id_type id_;
@@ -40,6 +43,7 @@ namespace sdb {
         virt_addr address_;
         bool is_enabled_;
         std::byte saved_data_;
+        int hardware_register_index_ = -1; 
     };
 }
 
